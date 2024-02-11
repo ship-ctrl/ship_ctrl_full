@@ -8,35 +8,39 @@
 #include <iostream>
 #include "GNSSData.h"
 
+/// @brief Data container proto
+/// @author @Tommy0x121 
 struct ETL_container
 {
-    int hh;
+    int hh; // @ship-ctrl so ever but why not short?
     int mm;
     int ss;
     int ms;
-    std::string Message_type;
-    std::string Position_indicator_of_engine_telegraph;
+    std::string Message_type; // @Tommy0x121 @attention this is odd @todo
+    std::string Position_indicator_of_engine_telegraph; // @Tommy0x121 @attention this probably shoud be corresponding int repr? @todo
     int Position_indicator_of_sub_telegraph;
     std::string Operating_location_indicator;
     int Number_of_engine_or_propeller_shaft;
 };
 
 
+/// @brief tokenizes string and dumps to contalner
+/// @author @Tommy0x121 
+/// @details @todo Does standard allows partial NULL fields? And do we wanna handle 'em?
+/// @param sentence <ETL,hhmmss.ss, >
+/// @param container ETL_container type
+/// @return error token position / 1 otherwise
 int parseNMEA_ETL(const std::string& sentence, ETL_container* container)
 {
     short error_index = -1;
     std::istringstream iss(sentence);
-
     std::string token;
+
     if (!(std::getline(iss, token, ',') && token.substr(3) == "ETL"))
     {
         LOG(FATAL) << "Token error in " << sentence;
         return error_index;
     }
-    // else
-    // {
-    //     std::cout  << "Token is: " << token << endl;
-    // }
 
 
     std::string time;
@@ -46,23 +50,7 @@ int parseNMEA_ETL(const std::string& sentence, ETL_container* container)
         LOG(WARNING) << "Time error in " << sentence;
         return error_index;
     }
-    // else
-    // {
-    //     cout << "Time is ";
-    //     switch (size(time))
-    //     {
-    //         case 0:
-    //         {
-    //             cout << "NULL" << endl;
-    //             break;
-    //         }
-    //         case 9:
-    //         {
-    //             cout << time.substr(0, 2) << "h " << time.substr(2, 2) << "m " << time.substr(4, 2) << "s " << time.substr(7) << "ms" << endl;
-    //             break;
-    //         }
-    //     }
-    // }
+
     container->hh = stoi(time.substr(0, 2));
     container->mm = stoi(time.substr(2, 2));
     container->ss = stoi(time.substr(4, 2));
@@ -75,10 +63,7 @@ int parseNMEA_ETL(const std::string& sentence, ETL_container* container)
         LOG(WARNING)<< "Message type error in " << sentence;
         return error_index;
     }
-    // else
-    // {
-    //     cout << "Message type is " << message_type << endl;
-    // }
+    
     container->Message_type = message_type;
 
     std::string position_indicator;
@@ -89,12 +74,7 @@ int parseNMEA_ETL(const std::string& sentence, ETL_container* container)
         return error_index;
     }
     container->Position_indicator_of_engine_telegraph = position_indicator  ;
-    // else
-    // {
-    //     cout << "Position indicator is " << position_indicator << endl;
-    // }
-
-
+    
     std::string sub_telegraph_position;
     --error_index;
     if (!(std::getline(iss, sub_telegraph_position, ',') && (std::stoi(sub_telegraph_position) == 20 || std::stoi(sub_telegraph_position) == 30 || std::stoi(sub_telegraph_position) == 40)))
@@ -102,12 +82,8 @@ int parseNMEA_ETL(const std::string& sentence, ETL_container* container)
         LOG(WARNING) << "Position indicator of sub telegraph position error" << sentence;
         return error_index;
     }
-    // else
-    // {
-    //     cout << "Sub telegraph position is " << sub_telegraph_position << endl;
-    // }
+    
     container->Position_indicator_of_sub_telegraph = stoi(sub_telegraph_position);
-
 
     std::string operating_location_indicator;
     --error_index;
@@ -116,30 +92,25 @@ int parseNMEA_ETL(const std::string& sentence, ETL_container* container)
         LOG(WARNING) << "Opertaing location indicator error in " << sentence;
         return error_index;
     }
-    // else
-    // {
-    //     cout << "operating location indicator is " << operating_location_indicator << endl;
-    // }
-    container->Operating_location_indicator = operating_location_indicator;
 
+    container->Operating_location_indicator = operating_location_indicator;
 
     std::string Number;
     --error_index;
-    if (!(std::getline(iss, Number, '*') && (Number == "Odd" || Number == "Even" || Number == "0")))
+    if (!(std::getline(iss, Number, '*') && (Number == "Odd" || Number == "Even" || Number == "0"))) //@Tommy0x121 @test @todo don't rly get it
     {
         LOG(WARNING) << "Number  of engine or propeller shaft error in " << sentence;
         return error_index;
     }
-    // else
-    // {
-    // cout << "Number is " << Number << endl;
-    // }
+    
     container -> Number_of_engine_or_propeller_shaft = stoi(Number);
-
 
     return 1;
 }
 
+/// @brief 
+/// @author @Tommy0x121 
+/// @return 
 std::string generate_ETL()
 {
     std::string hh = std::to_string(rand() % 24); if (size(hh) == 1) hh = "0" + hh;
@@ -159,15 +130,19 @@ std::string generate_ETL()
         "*hh<CR><LF>";
 }
 
-
-std::string get_ETL(ETL_container container)
+/// @brief 
+/// @author @Tommy0x121 
+/// @param container ETL_container type
+/// FCN does not change so just passing a const link
+/// @return 
+std::string get_ETL(const ETL_container& container) 
 {
     std::string hh = std::to_string(container.hh); if (size(hh) == 1) hh = "0" + hh;
     std::string mm = std::to_string(container.mm); if (size(mm) == 1) mm = "0" + mm;
     std::string ss = std::to_string(container.ss); if (size(ss) == 1) ss = "0" + ss;
     std::string ms = std::to_string(container.ms); if (size(ms) == 1) ms = "0" + ms;
     std::string event_time = hh + mm + ss + "." + ms;
-    std::string message_type = container.message_type;
+    std::string message_type = container.message_type; // @Tommy0x121 @todo Either #define constant "ETL" or 
     std::string position_indicator_of_engine_telegraph = container.position_indicator_of_engine_telegraph;
     std::string position_indicator_of_sub_telegraph = std::to_string(container.position_indicator_of_sub_telegraph);
     std::string operating_location_indicator = container.operating_location_indicator;
