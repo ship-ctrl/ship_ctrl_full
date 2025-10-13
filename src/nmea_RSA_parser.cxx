@@ -8,12 +8,12 @@
 
 
 struct RSA_container
-(
-    unsigned Starboard_rudder_sensor;
+{
+    uint16_t Starboard_rudder_sensor;
     std::string Status1;
-    unsigned Port_rudder_sensor;
+    uint16_t Port_rudder_sensor;
     std::string Status2;
-);
+};
 
 
 std::string generate_rsa()

@@ -91,7 +91,8 @@ std::string formNMEAMessage(const std::string& sentence, const std::string talk_
 
 #undef TALKER_ID
 
-std::string getCurrentTime() {
+std::string getCurrentTime() 
+{
     // Get the current system time
     auto now = std::chrono::system_clock::now();
     auto time_t_now = std::chrono::system_clock::to_time_t(now);
