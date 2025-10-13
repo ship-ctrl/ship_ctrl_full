@@ -83,5 +83,6 @@
             "binaryPath": "/home/ares/dev/ship_ctrl_full/nmea_console",
             "binaryArgs": []
         }
-    ]
+    ],
+    "C_Cpp.default.compilerPath": "/usr/bin/clang++"
 }
