@@ -30,7 +30,7 @@ int parseNMEA_ETL(const std::string& sentence, ETL_container* container)
     uint8_t error_index = -1;
     std::istringstream iss(sentence);
 
-    std::string token;
+    //std::string token;
 
     ///@note on this point U0ETL (talkerID and msg type are already cuted while determining a parser object at nmea_handler common class)
     //if (!(std::getline(iss, token, ',') && token.substr(3) == "ETL"))
