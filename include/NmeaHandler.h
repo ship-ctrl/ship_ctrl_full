@@ -10,6 +10,8 @@
 #include <map>
 #include "nmea_tools.h"
 
+#include "allHandlers.hpp"
+
 using namespace std; // @todo: get rid of
 
 
