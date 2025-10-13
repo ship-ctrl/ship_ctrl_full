@@ -254,13 +254,6 @@ std::string generate_htc()
 }
 
 
-
-
-
-
-
-
-
 int parseNMEA_HTD(const std::string& sentence, HTC_HTD_container* storage)
 {
     short error_index = -1;
