@@ -8,7 +8,6 @@ assemble multiple prjs to finaly become ship ctrl app
 install libboost-all
 ```bash 
 sudo apt-get install libboost-all-dev
-
 ``` 
 
 install glog
