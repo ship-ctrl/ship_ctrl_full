@@ -36,3 +36,12 @@ cmake --build build
 cmake --build build --target test
 ```
 you should probably run tests on main
+
+______
+
+# Project structure
+
+- [NMEA_COM]() — main comm module currently only accepting and distribute incoming messages
+- [handler]() — gets propper handler for every message based on it's content
+- [tools]() — common methods to form/check/fill msgs
+- Msg's parsers and containers — see standard for more description 
