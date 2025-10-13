@@ -16,7 +16,7 @@ struct ETL_container
     int mm;
     int ss;
     int ms;
-    /// @brief  msg type ( Order Answerback )
+    /// @brief  msg type ( Order/Answerback )
     std::string message_type;
     std::string position_indicator_of_engine_telegraph;
     int position_indicator_of_sub_telegraph;
@@ -27,15 +27,17 @@ struct ETL_container
 
 int parseNMEA_ETL(const std::string& sentence, ETL_container* container)
 {
-    short error_index = -1;
+    uint8_t error_index = -1;
     std::istringstream iss(sentence);
 
     std::string token;
-    if (!(std::getline(iss, token, ',') && token.substr(3) == "ETL"))
-    {
-        LOG(FATAL) << "Token error in " << sentence;
-        return error_index;
-    }
+
+    ///@note on this point U0ETL (talkerID and msg type are already cuted while determining a parser object at nmea_handler common class)
+    //if (!(std::getline(iss, token, ',') && token.substr(3) == "ETL"))
+    //{
+        //LOG(FATAL) << "Token error in " << sentence;
+        //return error_index;
+    //}
 
     std::string time;
     --error_index;
@@ -68,7 +70,7 @@ int parseNMEA_ETL(const std::string& sentence, ETL_container* container)
         LOG(WARNING) << "Position indicator of engine telegraph error in " << sentence;
         return error_index;
     }
-    container->position_indicator_of_engine_telegraph = position_indicator  ;
+    container->position_indicator_of_engine_telegraph = position_indicator;
 
     std::string sub_telegraph_position;
     --error_index;
