@@ -46,7 +46,6 @@ int parseNMEA_ETL(const std::string& sentence, ETL_container* container)
         LOG(WARNING) << "Time error in " << sentence;
         return error_index;
     }
-    
     container->hh = stoi(time.substr(0, 2));
     container->mm = stoi(time.substr(2, 2));
     container->ss = stoi(time.substr(4, 2));
@@ -60,7 +59,6 @@ int parseNMEA_ETL(const std::string& sentence, ETL_container* container)
         LOG(WARNING)<< "Message type error in " << sentence;
         return error_index;
     }
-
     container->message_type = message_type;
 
     std::string position_indicator;
@@ -79,9 +77,7 @@ int parseNMEA_ETL(const std::string& sentence, ETL_container* container)
         LOG(WARNING) << "Position indicator of sub telegraph position error" << sentence;
         return error_index;
     }
-
     container->position_indicator_of_sub_telegraph = stoi(sub_telegraph_position);
-
 
     std::string operating_location_indicator;
     --error_index;
@@ -92,7 +88,6 @@ int parseNMEA_ETL(const std::string& sentence, ETL_container* container)
     }
     container->operating_location_indicator = operating_location_indicator;
 
-
     std::string Number;
     --error_index;
     if (!(std::getline(iss, Number, '*') && (Number == "Odd" || Number == "Even" || Number == "0")))
@@ -100,9 +95,7 @@ int parseNMEA_ETL(const std::string& sentence, ETL_container* container)
         LOG(WARNING) << "Number  of engine or propeller shaft error in " << sentence;
         return error_index;
     }
-
     container -> number_of_engine_or_propeller_shaft = stoi(Number);
-
 
     return 1;
 }
@@ -129,6 +122,7 @@ std::string get_ETL(ETL_container container)
 
 /// @brief test purpose generator
 /// @return kinda valid ETL msg
+/// @test ${1: test will be somehow like nmea_tools.formNMEAMessage(etlObj.generate_ETL())
 std::string generate_ETL()
 {
     std::string hh = std::to_string(rand() % 24); if (size(hh) == 1) hh = "0" + hh;
