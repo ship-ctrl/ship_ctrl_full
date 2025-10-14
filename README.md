@@ -41,6 +41,6 @@ ______
 # Project structure
 
 - [NMEA_COM]() — main comm module currently only accepting and distribute incoming messages
-- [handler]() — gets propper handler for every message based on it's content
+- [handler](https://github.com/ship-ctrl/ship_ctrl_full/blob/ship-ctrl/issue11/src/NmeaHandler.cpp) — gets propper handler for every message based on it's content
 - [tools]() — common methods to form/check/fill msgs
 - Msg's parsers and containers — see standard for more description 
