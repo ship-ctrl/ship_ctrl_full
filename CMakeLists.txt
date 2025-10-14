@@ -6,7 +6,8 @@ project(ship_ctrl_full VERSION 0.1.0 DESCRIPTION "Ship communication protocol ov
 
 # Set the C++ standard to be used
 set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+# set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0 -g")
 #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -flto")
 

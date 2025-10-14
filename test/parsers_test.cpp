@@ -7,6 +7,7 @@
 #include <iostream>
 #include <cmath>
 #include <allHandlers.h>
+#include <nmea_tools.h>
 
 BOOST_AUTO_TEST_SUITE(ParserTests)
 

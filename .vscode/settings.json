@@ -79,8 +79,8 @@
     },
     "makefile.launchConfigurations": [
         {
-            "cwd": "/home/ares/dev/ship_ctrl_full",
-            "binaryPath": "/home/ares/dev/ship_ctrl_full/nmea_console",
+            "cwd": "${workspaceFolder}",
+            "binaryPath": "${workspaceFolder}/nmea_console",
             "binaryArgs": []
         }
     ],

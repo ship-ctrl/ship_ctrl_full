@@ -22,6 +22,7 @@ target_link_libraries(nmea_tools_test ${Boost_LIBRARIES} nmea_tools)
 target_link_libraries(parsers_test
     ${Boost_LIBRARIES}
     glog::glog
+    nmea_tools
 )
 
 add_test(NAME Test1 COMMAND test1)
