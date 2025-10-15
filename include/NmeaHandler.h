@@ -15,29 +15,30 @@
 using namespace std; // @todo: get rid of
 
 
-const string IN_SENDER = "IN"; // combined gps + LC = integrated nav!
-const string GP_SENDER = "GP"; // gps but not glonass!
-const string GA_SENDER = "GA"; // galileo
-const string GL_SENDER = "GL"; // glonass
-const string GN_SENDER = "GN"; // any other GNSS
-const string RC_SENDER = "RC"; // the remote control must be here
-const string SN_SENDER = "SN"; // pos control sys
+const std::string IN_SENDER = "IN"; // combined gps + LC = integrated nav!
+const std::string GP_SENDER = "GP"; // gps but not glonass!
+const std::string GA_SENDER = "GA"; // galileo
+const std::string GL_SENDER = "GL"; // glonass
+const std::string GN_SENDER = "GN"; // any other GNSS
+const std::string RC_SENDER = "RC"; // the remote control must be here
+const std::string SN_SENDER = "SN"; // pos control sys
 
 // NMEA message types
-const string GGA_MESSAGE = "GGA";
-const string RMC_MESSAGE = "RMC";
-const string VTG_MESSAGE = "VTG";
+const std::string GGA_MESSAGE = "GGA";
+const std::string RMC_MESSAGE = "RMC";
+const std::string VTG_MESSAGE = "VTG";
+const std::string ETL_MESSAGE = "ETL";
 
 // Base class for NMEA message handlers
 class NmeaMessageHandler {
 public:
-    virtual void handle(const string& message) = 0;
+    virtual void handle(const std::string& message) = 0;
 };
 
 // GGA message handler
 class GgaMessageHandler : public NmeaMessageHandler {
 public:
-    void handle(const string& message) {
+    void handle(const std::string& message) {
         // Handle GGA message
         cout << "Handling GGA message: " << message << endl;
     }
@@ -46,7 +47,7 @@ public:
 // RMC message handler
 class RmcMessageHandler : public NmeaMessageHandler {
 public:
-    void handle(const string& message) {
+    void handle(const std::string& message) {
         // Handle RMC message
         cout << "Handling RMC message: " << message << endl;
     }
@@ -55,22 +56,30 @@ public:
 // VTG message handler
 class VtgMessageHandler : public NmeaMessageHandler {
 public:
-    void handle(const string& message) {
+    void handle(const std::string& message) {
         // Handle VTG message
         cout << "Handling VTG message: " << message << endl;
     }
 };
 
+/// @brief handle ETL message
+class EtlMessageHandler : public NmeaMessageHandler {
+public:
+    void handle(const std::string& message){
+        LOG_IF(INFO,cond) << message; // define condition
+        parseNMEA_ETL(message,)
+    }    
+};
 // NMEA message dispatcher class
 class NmeaMessageDispatcher {
 public:
-    void addHandler(const string& messageType, NmeaMessageHandler* handler) {
+    void addHandler(const std::string& messageType, NmeaMessageHandler* handler) {
         handlers[messageType] = handler;
     }
 
-    void dispatch(const string& message) {
+    void dispatch(const std::string& message) {
         // Extract message type from message
-        string messageType = message.substr(3, 6); // no talker ID add $ so 3-6
+        std::string messageType = message.substr(3, 6); // no talker ID add $ so 3-6
 
         if (CalculateChecksum<unsigned char>(message))
         {
@@ -89,20 +98,20 @@ public:
     }
 
 private:
-    map <string, NmeaMessageHandler*> handlers;
+    map <std::string, NmeaMessageHandler*> handlers;
 };
 
 // NMEA message queue class
 class NmeaMessageQueue {
 public:
-    void enqueue(const string& message) {
+    void enqueue(const std::string& message) {
         messages.push(message);
     }
 
     void process(NmeaMessageDispatcher& dispatcher) {
         while (!messages.empty()) {
             // Dequeue message from queue
-            string message = messages.front();
+            std::string message = messages.front();
             messages.pop();
 
             // Dispatch message to appropriate handler
@@ -111,7 +120,7 @@ public:
     }
 
 private:
-    queue<string> messages;
+    queue<std::string> messages;
 };
 /*
 int main() {
