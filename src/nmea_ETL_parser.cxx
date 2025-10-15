@@ -7,7 +7,7 @@
 
 
 
-int parseNMEA_ETL(const std::string& sentence, ETL_container* container)
+uint8_t parseNMEA_ETL(const std::string& sentence, ETL_container* container)
 {
     uint8_t error_index = -1;
     std::istringstream iss(sentence);
@@ -82,7 +82,7 @@ int parseNMEA_ETL(const std::string& sentence, ETL_container* container)
     return 1;
 }
 
-std::string get_ETL(ETL_container container)
+std::string get_ETL(const ETL_container& container)
 {
     std::string hh = std::to_string(container.hh); if (size(hh) == 1) hh = "0" + hh;
     std::string mm = std::to_string(container.mm); if (size(mm) == 1) mm = "0" + mm;
