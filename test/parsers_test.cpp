@@ -6,7 +6,7 @@
 
 #include <iostream>
 #include <cmath>
-#include <allHandlers.h>
+#include <allHandlers.hpp>
 
 BOOST_AUTO_TEST_SUITE(ParserTests)
 
@@ -39,5 +39,24 @@ BOOST_AUTO_TEST_CASE(ETL_in_Test)
     //Calculator calc;
     BOOST_CHECK_EQUAL( 2 - 1 , 1);
 }
+
+BOOST_AUTO_TEST_CASE(ETL_performance_Test)
+{
+    auto start = std::chrono::high_resolution_clock::now();
+    auto etls = generate_ETL();
+    ETL_container etl;
+    uint16_t i = 0,err = 0;
+    while (!err && i < 100)
+    {
+        err = parseNMEA_ETL(etls,etl);
+    }
+
+    auto end = std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
+    BOOST_TEST_MESSAGE("Execution time: " << duration.count() << " microseconds");
+
+    BOOST_CHECK_EQUAL( err , 0);
+}
+
 
 BOOST_AUTO_TEST_SUITE_END()
