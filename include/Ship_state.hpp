@@ -1,6 +1,7 @@
 #pragma once
 
 #include "GNSSData.h"
+#include "containers.hpp"
 
 /// @brief class to store ship state for both comands and answers
 class Ship_state
