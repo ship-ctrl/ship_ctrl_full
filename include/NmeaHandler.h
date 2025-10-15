@@ -12,8 +12,6 @@
 
 #include "allHandlers.hpp"
 
-using namespace std; // @todo: get rid of
-
 
 const std::string IN_SENDER = "IN"; // combined gps + LC = integrated nav!
 const std::string GP_SENDER = "GP"; // gps but not glonass!
@@ -40,7 +38,7 @@ class GgaMessageHandler : public NmeaMessageHandler {
 public:
     void handle(const std::string& message) {
         // Handle GGA message
-        cout << "Handling GGA message: " << message << endl;
+        std::cout << "Handling GGA message: " << message << endl;
     }
 };
 
@@ -49,7 +47,7 @@ class RmcMessageHandler : public NmeaMessageHandler {
 public:
     void handle(const std::string& message) {
         // Handle RMC message
-        cout << "Handling RMC message: " << message << endl;
+        std::cout << "Handling RMC message: " << message << endl;
     }
 };
 
@@ -58,7 +56,7 @@ class VtgMessageHandler : public NmeaMessageHandler {
 public:
     void handle(const std::string& message) {
         // Handle VTG message
-        cout << "Handling VTG message: " << message << endl;
+        std::cout << "Handling VTG message: " << message << endl;
     }
 };
 
@@ -93,7 +91,7 @@ public:
             handlers[messageType]->handle(message);
         }
         else {
-            cout << "No handler found for message type: " << messageType << endl;
+            std::cout << "No handler found for message type: " << messageType << endl;
         }
     }
 
