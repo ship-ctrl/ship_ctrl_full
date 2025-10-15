@@ -1,22 +1,10 @@
+/// @brief ETL message parse / generate / form instructions
+/// @author @Tommy0x121
+
 #pragma once
 
 #include "nmea_ETL_parser.hpp"
 
-/// @brief container to store ETL
-/// @todo make shipClass <-> ETLc converter fcn
-struct ETL_container
-{
-    int hh;
-    int mm;
-    int ss;
-    int ms;
-    /// @brief  msg type ( Order/Answerback )
-    std::string message_type;
-    std::string position_indicator_of_engine_telegraph;
-    int position_indicator_of_sub_telegraph;
-    std::string operating_location_indicator;
-    int number_of_engine_or_propeller_shaft;
-};
 
 
 int parseNMEA_ETL(const std::string& sentence, ETL_container* container)
@@ -45,15 +33,15 @@ int parseNMEA_ETL(const std::string& sentence, ETL_container* container)
     container->ss = stoi(time.substr(4, 2));
     container->ms = stoi(time.substr(7, 2));
 
-    std::string message_type;
+    std::string msg_type;
     --error_index;
 
-    if (!(std::getline(iss, message_type, ',') && (message_type == "O" || message_type == "A")))
+    if (!(std::getline(iss, msg_type, ',') && (msg_type == "O" || msg_type == "A")))
     {
         LOG(WARNING)<< "Message type error in " << sentence;
         return error_index;
     }
-    container->message_type = message_type;
+    container->msg_type = msg_type;
 
     std::string position_indicator;
     --error_index;
@@ -62,7 +50,7 @@ int parseNMEA_ETL(const std::string& sentence, ETL_container* container)
         LOG(WARNING) << "Position indicator of engine telegraph error in " << sentence;
         return error_index;
     }
-    container->position_indicator_of_engine_telegraph = position_indicator;
+    container->eng_tel = position_indicator;
 
     std::string sub_telegraph_position;
     --error_index;
@@ -71,16 +59,16 @@ int parseNMEA_ETL(const std::string& sentence, ETL_container* container)
         LOG(WARNING) << "Position indicator of sub telegraph position error" << sentence;
         return error_index;
     }
-    container->position_indicator_of_sub_telegraph = stoi(sub_telegraph_position);
+    container->sub_tel = stoi(sub_telegraph_position);
 
-    std::string operating_location_indicator;
+    std::string op_location;
     --error_index;
-    if (!(std::getline(iss, operating_location_indicator, ',') && (size(operating_location_indicator) == 0 || size(operating_location_indicator) == 1 && (operating_location_indicator[0] == 'B' || operating_location_indicator[0] == 'C' || operating_location_indicator[0] == 'P' || operating_location_indicator[0] == 'S' || operating_location_indicator[0] == 'E' || operating_location_indicator[0] == 'W'))))
+    if (!(std::getline(iss, op_location, ',') && (size(op_location) == 0 || size(op_location) == 1 && (op_location[0] == 'B' || op_location[0] == 'C' || op_location[0] == 'P' || op_location[0] == 'S' || op_location[0] == 'E' || op_location[0] == 'W'))))
     {
         LOG(WARNING) << "Opertaing location indicator error in " << sentence;
         return error_index;
     }
-    container->operating_location_indicator = operating_location_indicator;
+    container->op_location = op_location;
 
     std::string Number;
     --error_index;
@@ -89,7 +77,7 @@ int parseNMEA_ETL(const std::string& sentence, ETL_container* container)
         LOG(WARNING) << "Number  of engine or propeller shaft error in " << sentence;
         return error_index;
     }
-    container -> number_of_engine_or_propeller_shaft = stoi(Number);
+    container -> shaft_num = stoi(Number);
 
     return 1;
 }
@@ -101,14 +89,14 @@ std::string get_ETL(ETL_container container)
     std::string ss = std::to_string(container.ss); if (size(ss) == 1) ss = "0" + ss;
     std::string ms = std::to_string(container.ms); if (size(ms) == 1) ms = "0" + ms;
     std::string event_time = hh + mm + ss + "." + ms;
-    std::string message_type = container.message_type;
-    std::string position_indicator_of_engine_telegraph = container.position_indicator_of_engine_telegraph;
-    std::string position_indicator_of_sub_telegraph = std::to_string(container.position_indicator_of_sub_telegraph);
-    std::string operating_location_indicator = container.operating_location_indicator;
-    std::string number_of_engine_or_propeller_shaft = std::to_string(container.number_of_engine_or_propeller_shaft);
+    std::string msg_type = container.msg_type;
+    std::string eng_tel = container.eng_tel;
+    std::string sub_tel = std::to_string(container.sub_tel);
+    std::string op_location = container.op_location;
+    std::string shaft_num = std::to_string(container.shaft_num);
     std::string comma = ",";
-    return "ETL" + comma + event_time + comma + message_type + comma + position_indicator_of_engine_telegraph + comma
-        + position_indicator_of_sub_telegraph + comma + operating_location_indicator + comma + number_of_engine_or_propeller_shaft + comma;
+    return "ETL" + comma + event_time + comma + msg_type + comma + eng_tel + comma
+        + sub_tel + comma + op_location + comma + shaft_num + comma;
 }
 
 
@@ -120,13 +108,13 @@ std::string generate_ETL()
     std::string ms = std::to_string(rand() % 100); if (size(ms) == 1) ms = "0" + ms;
     std::string event_time = hh + mm + ss + "." + ms;
     // O — order, A — answerback
-    std::string message_type = (rand() % 2) ? "O" : "A";
-    std::string position_indicator_of_engine_telegraph = std::to_string(rand() % 2) + std::to_string(rand() % 5 + 1);
-    std::string position_indicator_of_sub_telegraph = std::to_string(rand() % 3 + 2) + "0";
+    std::string msg_type = (rand() % 2) ? "O" : "A";
+    std::string eng_tel = std::to_string(rand() % 2) + std::to_string(rand() % 5 + 1);
+    std::string sub_tel = std::to_string(rand() % 3 + 2) + "0";
     std::string help[7] = { "B", "P", "S", "C", "E", "W", " "};
-    std::string operating_location_indicator =  help[rand() % 7];
-    std::string number_of_engine_or_propeller_shaft = std::to_string(rand() % 10);
+    std::string op_location =  help[rand() % 7];
+    std::string shaft_num = std::to_string(rand() % 10);
     std::string comma = ",";
-    return "ETL" + comma + event_time + comma + message_type + comma + position_indicator_of_engine_telegraph + comma
-        + position_indicator_of_sub_telegraph + comma + operating_location_indicator + comma + number_of_engine_or_propeller_shaft + comma;
+    return "ETL" + comma + event_time + comma + msg_type + comma + eng_tel + comma
+        + sub_tel + comma + op_location + comma + shaft_num + comma;
 }
