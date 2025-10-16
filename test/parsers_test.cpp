@@ -56,6 +56,8 @@ BOOST_AUTO_TEST_CASE(ETL_performance_Test)
     BOOST_TEST_MESSAGE("Execution time: " << duration.count() << " microseconds");
 
     BOOST_CHECK_EQUAL( err , 0);
+    /// @todo set apropriate time and flag enabled condition or leave comented
+    // BOOST_CHECK(duration.count() < 1000); // Must finish in under 1 millisecond 
 }
 
 
