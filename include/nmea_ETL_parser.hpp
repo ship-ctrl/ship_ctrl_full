@@ -10,14 +10,14 @@
 //#include "GNSSData.h"
 
 
-uint8_t parseNMEA_ETL(const std::string& sentence, ETL_container* container)
+uint8_t parseNMEA_ETL(const std::string& sentence, ETL_container* container);
 
 /// @brief 
 /// @param container 
 /// @return 
-std::string get_ETL(const ETL_container& container)
+std::string get_ETL(const ETL_container& container);
 
 /// @brief test purpose generator
 /// @return kinda valid ETL msg
 /// @test ${1: test will be somehow like nmea_tools.formNMEAMessage(etlObj.generate_ETL())
-std::string generate_ETL()
+std::string generate_ETL();
