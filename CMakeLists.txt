@@ -44,7 +44,7 @@ configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/Version.h
     )
 
-if(BUILD_TEST_lo)
+if(BUILD_TEST_lo EQUAL "ON")
     if(INCLUDE_BOOST OR RUNNER_FETCH_ALL)
         FetchContent_Declare(
             Boost
@@ -68,7 +68,33 @@ if(BUILD_TEST_lo)
     else()
         #message (FATAL_ERROR "Cannot find Boost")
     endif(Boost_FOUND)
-endif(BUILD_TEST_lo)
+endif(BUILD_TEST_lo EQUAL "ON")
+
+option(FORCE_FETCH_DEPS "fetching deps via fetchcontent" ON)
+# option(INCLUDE_GLOG "fetch glog and link to main target" OFF)
+# option(INCLUDE_GFLAGS "fetch gflags and link to main target" OFF)
+
+if(FORCE_FETCH_DEPS EQUAL "ON")
+    # FetchContent for both gflags and glog
+    FetchContent_Declare(
+        gflags
+        GIT_REPOSITORY https://github.com/gflags/gflags.git
+        GIT_TAG main
+    )
+    FetchContent_Declare(
+        glog
+        GIT_REPOSITORY https://github.com/google/glog.git
+        # GIT_TAG v0.6.0
+    )
+    set(BUILD_SHARED_LIBS ON CACHE BOOL "Build shared libraries" FORCE)
+    set(WITH_GFLAGS OFF CACHE BOOL "Build with gflags")  # Or ON if glog needs it
+    set(WITH_UNWIND OFF CACHE BOOL "Build with unwind support")
+    FetchContent_MakeAvailable(gflags glog)
+else()
+    message(STATUS "FFD: ${FORCE_FETCH_DEPS}")
+    find_package(gflags REQUIRED)
+    find_package(glog REQUIRED)
+endif(FORCE_FETCH_DEPS EQUAL "ON")
 
 # enable_testing()
 
@@ -88,7 +114,7 @@ message(STATUS "==========================================")
 # Include headers
 include_directories(
     include
-    ${Boost_INCLUDE_DIR}
+    # ${Boost_INCLUDE_DIR}
     )
 
 # add_subdirectory( src build/src )
