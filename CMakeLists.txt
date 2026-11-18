@@ -4,23 +4,95 @@ cmake_minimum_required(VERSION 3.9)
 # Specify the project info.
 project(ship_ctrl_full VERSION 0.1.0 DESCRIPTION "Ship communication protocol over udp non_library version")
 
+if(CMAKE_VERSION VERSION_LESS "3.29.0") 
+    message("Please consider to switch to CMake 3.29.0 or stay in hell with no lib dedup in case of building cv with intrinsics")
+
+else()
+    cmake_policy(SET CMP0156 NEW) #deduplicate lib
+    cmake_policy(SET CMP0179 NEW) #use first occurrence
+endif()
+
+# Include the module
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
+include(AutoVersion)
+include(FetchContent)
+
 # Set the C++ standard to be used
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0 -g")
+# set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0 -g")
+set(CMAKE_CXX_FLAGS_DEBUG_INIT "-Wall -g -O0")
+set(CMAKE_CXX_FLAGS_RELEASE_INIT "-Wall -O3 -flto")
 #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -flto")
 
-enable_testing()
+set(VERSION_FILE "${CMAKE_CURRENT_SOURCE_DIR}/version_info.txt")
 
-find_package(Boost REQUIRED)
+# Increment build number each time CMake runs
+increment_and_save_build(${CMAKE_CURRENT_SOURCE_DIR})
 
-find_package(glog REQUIRED)
+# Read back the updated values for use in CMake
+read_version_from_file(${CMAKE_CURRENT_SOURCE_DIR})
+
+option(INCLUDE_GLOG "fetch glog and link to main target" OFF)
+option(INCLUDE_GFLAGS "fetch gflags and link to main target" OFF)
+
+option(BUILD_TEST_lo "Build the testing tree" ON)
+option(INCLUDE_BOOST "fetch boost and link to main target" OFF)
+
+configure_file( 
+    ${CMAKE_CURRENT_SOURCE_DIR}/Version.h.in 
+    ${CMAKE_CURRENT_SOURCE_DIR}/Version.h
+    )
+
+if(BUILD_TEST_lo)
+    if(INCLUDE_BOOST OR RUNNER_FETCH_ALL)
+        FetchContent_Declare(
+            Boost
+            GIT_REPOSITORY https://github.com/boostorg/boost.git
+            #GIT_TAG boost-1.85.0
+        )
+        FetchContent_MakeAvailable(Boost)
+    else()
+        message (STATUS "Boost found or RUNNER_FETCH_ALL = ${RUNNER_FETCH_ALL}")
+        find_package (Boost COMPONENTS unit_test_framework filesystem REQUIRED CONFIG)
+    endif(INCLUDE_BOOST OR RUNNER_FETCH_ALL)
+    
+    enable_testing()
+    include(CTest)
+    message("testdir is ${CMAKE_CURRENT_SOURCE_DIR}/test/CMakeLists.txt")
+    if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/test/CMakeLists.txt")
+        add_subdirectory(test)
+    endif()
+    if(Boost_FOUND)
+        message ("Boost found")
+    else()
+        #message (FATAL_ERROR "Cannot find Boost")
+    endif(Boost_FOUND)
+endif(BUILD_TEST_lo)
+
+# enable_testing()
+
+# find_package(Boost REQUIRED)
+
+# find_package(glog REQUIRED)
+
+message(STATUS "==========================================")
+message(STATUS "Project: ${PROJECT_NAME}")
+message(STATUS "Version: ${FULL_VERSION}")
+message(STATUS "Build Number: ${BUILD_NUMBER}")
+message(STATUS "Minor Version: ${MINOR_VERSION}")
+message(STATUS "==========================================")
+
+
 
 # Include headers
-include_directories(include)
+include_directories(
+    include
+    ${Boost_INCLUDE_DIR}
+    )
 
-add_subdirectory( src build/src )
-add_subdirectory( test build/test )
+# add_subdirectory( src build/src )
+# add_subdirectory( test build/test )
 
 
 
