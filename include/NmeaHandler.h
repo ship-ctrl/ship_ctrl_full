@@ -10,65 +10,112 @@
 #include <map>
 #include "nmea_tools.h"
 
-using namespace std; // @todo: get rid of
-
-
-const string IN_SENDER = "IN"; // combined gps + LC = integrated nav!
-const string GP_SENDER = "GP"; // gps but not glonass!
-const string GA_SENDER = "GA"; // galileo
-const string GL_SENDER = "GL"; // glonass
-const string GN_SENDER = "GN"; // any other GNSS
-const string RC_SENDER = "RC"; // the remote control must be here
-const string SN_SENDER = "SN"; // pos control sys
+const std::string IN_SENDER = "IN"; // combined gps + LC = integrated nav!
+const std::string GP_SENDER = "GP"; // gps but not glonass!
+const std::string GA_SENDER = "GA"; // galileo
+const std::string GL_SENDER = "GL"; // glonass
+const std::string GN_SENDER = "GN"; // any other GNSS
+const std::string RC_SENDER = "RC"; // the remote control must be here
+const std::string SN_SENDER = "SN"; // pos control sys
 
 // NMEA message types
-const string GGA_MESSAGE = "GGA";
-const string RMC_MESSAGE = "RMC";
-const string VTG_MESSAGE = "VTG";
+const std::string GGA_MESSAGE = "GGA";
+const std::string RMC_MESSAGE = "RMC";
+const std::string VTG_MESSAGE = "VTG";
+
+const std::string Q_MESSAGE = "Q";
+const std::string E_MESSAGE = "E";
+const std::string A_MESSAGE = "A";
+const std::string H_MESSAGE = "H";
+const std::string T_MESSAGE = "T";
 
 // Base class for NMEA message handlers
 class NmeaMessageHandler {
 public:
-    virtual void handle(const string& message) = 0;
+    virtual void handle(const std::string& message) = 0;
 };
 
 // GGA message handler
 class GgaMessageHandler : public NmeaMessageHandler {
 public:
-    void handle(const string& message) {
+    void handle(const std::string& message) {
         // Handle GGA message
-        cout << "Handling GGA message: " << message << endl;
+        // std::cout << "Handling GGA message: " << message << std::endl;
+        LOG(INFO) << "Handling GGA message: " << message << std::endl;
     }
 };
 
 // RMC message handler
 class RmcMessageHandler : public NmeaMessageHandler {
 public:
-    void handle(const string& message) {
+    void handle(const std::string& message) {
         // Handle RMC message
-        cout << "Handling RMC message: " << message << endl;
+        LOG(INFO) << "Handling RMC message: " << message << std::endl;
     }
 };
 
 // VTG message handler
 class VtgMessageHandler : public NmeaMessageHandler {
 public:
-    void handle(const string& message) {
+    void handle(const std::string& message) {
         // Handle VTG message
-        cout << "Handling VTG message: " << message << endl;
+        LOG(INFO) << "Handling VTG message: " << message << std::endl;
+    }
+};
+
+// Q message handler
+class QMessageHandler : public NmeaMessageHandler {
+public:
+    void handle(const std::string& message) {
+        // Handle Q message
+        LOG(INFO) << "Handling Q message: " << message << std::endl;
+    }
+};
+// E message handler
+class EMessageHandler : public NmeaMessageHandler {
+public:
+    void handle(const std::string& message) {
+        // Handle E message
+        LOG(INFO) << "Handling E message: " << message << std::endl;
+    }
+};
+// A message handler
+class AMessageHandler : public NmeaMessageHandler {
+public:
+    void handle(const std::string& message) {
+        // Handle A message
+        LOG(INFO) << "Handling A message: " << message << std::endl;
+    }
+};
+
+// H message handler
+class HMessageHandler : public NmeaMessageHandler {
+public:
+    void handle(const std::string& message) {
+        // Handle H message
+        LOG(INFO) << "Handling H message: " << message << std::endl;
+    }
+};
+
+// T message handler
+class TMessageHandler : public NmeaMessageHandler {
+public:
+    void handle(const std::string& message) {
+        // Handle T message
+        LOG(INFO) << "Handling T message: " << message << std::endl;
     }
 };
 
 // NMEA message dispatcher class
 class NmeaMessageDispatcher {
 public:
-    void addHandler(const string& messageType, NmeaMessageHandler* handler) {
+    void addHandler(const std::string& messageType, NmeaMessageHandler* handler) {
         handlers[messageType] = handler;
     }
 
-    void dispatch(const string& message) {
+    void dispatch(const std::string& message) {
         // Extract message type from message
-        string messageType = message.substr(3, 6); // no talker ID add $ so 3-6
+        std::string messageType = message.substr(3, 6); // no talker ID add $ so 3-6
 
         if (CalculateChecksum<unsigned char>(message))
         {
@@ -82,25 +129,26 @@ public:
             handlers[messageType]->handle(message);
         }
         else {
-            cout << "No handler found for message type: " << messageType << endl;
+            std::cout << "No handler found for message type: " << messageType << std::endl;
+            LOG(ERROR) << "No handler found for message type: " << messageType << std::endl;
         }
     }
 
 private:
-    map <string, NmeaMessageHandler*> handlers;
+    map <std::string, NmeaMessageHandler*> handlers;
 };
 
 // NMEA message queue class
 class NmeaMessageQueue {
 public:
-    void enqueue(const string& message) {
+    void enqueue(const std::string& message) {
         messages.push(message);
     }
 
     void process(NmeaMessageDispatcher& dispatcher) {
         while (!messages.empty()) {
             // Dequeue message from queue
-            string message = messages.front();
+            std::string message = messages.front();
             messages.pop();
 
             // Dispatch message to appropriate handler
@@ -109,7 +157,7 @@ public:
     }
 
 private:
-    queue<string> messages;
+    queue<std::string> messages;
 };
 /*
 int main() {

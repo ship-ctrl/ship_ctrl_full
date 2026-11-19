@@ -15,6 +15,7 @@ public:
 
     AsyncQueue() = default;
     virtual ~AsyncQueue() = default;
+    
     void push(T value) {
         //std::unique_lock<std::shared_mutex> lock(mutex_);
         std::unique_lock<std::mutex> lock(mutex_);
@@ -36,6 +37,8 @@ public:
         queue_.pop();
         return value;
     }
+
+    inline bool empty() { return queue_.empty(); }
 
 private:
     std::queue<T> queue_;
